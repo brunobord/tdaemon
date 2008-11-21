@@ -14,6 +14,10 @@ import re
 IGNORE_EXTENSIONS = ('pyc', 'pyo')
 
 class Watcher(object):
+    """
+    Watcher class. This is the daemon that is watching every file in the
+    directory and subdirectories, and that runs the test process.
+    """
     file_list = {}
     debug = False
 
@@ -24,12 +28,15 @@ class Watcher(object):
         self.debug = debug
 
     def include(self, name):
+        """Returns `True` if the file is not ignored"""
         for extension in IGNORE_EXTENSIONS:
             if name.endswith(extension):
                 return False
         return True
 
     def walk(self, top, file_list={}):
+        """Walks the walk. nah, seriously: reads the file and stores a hashkey
+        corresponding to its content."""
         for root, dirs, files in os.walk(top, topdown=False):
             for name in files:
                 if self.include(name):
@@ -40,6 +47,7 @@ class Watcher(object):
         return file_list
 
     def diff_list(self, list1, list2):
+        """Extracts differences between lists. For debug purposes"""
         for key in list1:
             if key in list2 and list2[key] != list1[key]:
                 print key
@@ -47,11 +55,13 @@ class Watcher(object):
                 print key
 
     def run(self, cmd):
+        """Runs the appropriate command"""
         print datetime.datetime.now()
         output = commands.getoutput(cmd)
         print output
 
     def run_tests(self):
+        """Execute tests"""
         cmd = None
         if self.test_program == 'nose':
             cmd = "cd %(path)s && nosetests" % {'path': self.file_path}
@@ -62,6 +72,7 @@ class Watcher(object):
             self.run(cmd)
 
     def loop(self):
+        """Main loop daemon."""
         while True:
             sleep(1)
             new_file_list = self.walk(self.file_path, {})
