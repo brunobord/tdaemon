@@ -25,13 +25,13 @@ When you're using django, the path to the project must be the path where
 
 ### TODO
 
-    [ ] implements py.test, if possible
     [ ] Benchmark it with larger files
     [ ] Extend the test utilities to other languages
     [ ] Add an "ignore" option to ignore other files (logs, sqlite database,
         image files, etc)
 ### Done
 
+    [X] implements py.test, if possible
     [X] Fixing bug: when a file vanished, the program fails.
     [X] I remember I made the first bits of the code after reading an article...
         [X] Find the link and name of the original author
