@@ -63,7 +63,7 @@ class Watcher(object):
     def run_tests(self):
         """Execute tests"""
         cmd = None
-        if self.test_program == 'nose':
+        if self.test_program in ('nose', 'nosetests'):
             cmd = "cd %(path)s && nosetests" % {'path': self.file_path}
         elif self.test_program == 'django':
             cmd = "python %s/manage.py test" % self.file_path
@@ -93,7 +93,7 @@ def main(prog_args=None):
     parser.usage = """Usage: %[prog] [options] [<path>]"""
     parser.add_option("-t", "--test-program", dest="test_program",
         default="nose", help="""specifies the test-program to use. Valid
-        values include `nose` and `django`""")
+        values include `nose` (or `nosetests`) and `django`""")
     parser.add_option("-d", "--debug", dest="debug", action="store_true",
         default=False)
 

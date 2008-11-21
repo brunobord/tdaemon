@@ -16,7 +16,7 @@ changes, the daemon runs the nosetests and you may watch the result.
 
 Two test programs are available:
 
-* nosetests (keyword is `nose`)
+* nosetests (keyword is `nose` or `nosetests`)
 * django (keyword is `django`)
 
 When you're using django, the path to the project must be the path where
