@@ -14,7 +14,7 @@ You may run like this:
 The daemon starts watching the directory and subdirectories. As soon as one file
 changes, the daemon runs the nosetests and you may watch the result.
 
-Two test programs are available:
+Three test programs are available:
 
 * nosetests (keyword is `nose` or `nosetests`)
 * django (keyword is `django`)
