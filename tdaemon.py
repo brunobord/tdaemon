@@ -1,5 +1,14 @@
 #!/usr/bin/env python
 #-*- coding: utf-8 -*-
+"""
+Multi-engine Test Daemon in Python
+
+Original concept by Jeff Winkler in:
+http://jeffwinkler.net/nosy-run-python-unit-tests-automatically/
+
+The present code is published under the terms of the MIT License. See LICENSE
+file for more details.
+"""
 
 import sys
 import os
