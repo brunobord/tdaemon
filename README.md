@@ -24,11 +24,11 @@ When you're using django, the path to the project must be the path where
 
 ### TODO
 
-[ ] implements py.test, if possible
-[ ] I remember I made the first bits of the code after reading an article...
-    [ ] Find the link and name of the original author
-    [ ] add appropriate credits
-[ ] Benchmark it with larger files
-[ ] Extend the test utilities to other languages
-[ ] Add an "ignore" option to ignore other files (logs, sqlite database,
-    image files, etc)
+    [ ] implements py.test, if possible
+    [ ] I remember I made the first bits of the code after reading an article...
+        [ ] Find the link and name of the original author
+        [ ] add appropriate credits
+    [ ] Benchmark it with larger files
+    [ ] Extend the test utilities to other languages
+    [ ] Add an "ignore" option to ignore other files (logs, sqlite database,
+        image files, etc)
