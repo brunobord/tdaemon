@@ -14,7 +14,11 @@ import re
 IGNORE_EXTENSIONS = ('pyc', 'pyo')
 IMPLEMENTED_TEST_PROGRAMS = ('nose', 'nosetests', 'django')
 
+# -------- Exceptions
 class InvalidTestProgram(Exception):
+    pass
+
+class InvalidFilePath(Exception):
     pass
 
 class Watcher(object):
@@ -27,13 +31,21 @@ class Watcher(object):
 
     def __init__(self, file_path, test_program, debug=False):
         # check configuration
-        self.check_configuration(test_program)
+        self.check_configuration(file_path, test_program)
         self.file_path = file_path
         self.file_list = self.walk(file_path)
         self.test_program = test_program
         self.debug = debug
 
-    def check_configuration(self, test_program):
+    def check_configuration(self, file_path, test_program):
+        """Checks if configuration is ok."""
+        # checking filepath
+        if not os.path.isdir(file_path):
+            raise InvalidFilePath("""INVALID CONFIGURATION: file path %s is not a directory""" %
+                os.path.abspath(file_path)
+            )
+
+        # checking test_program option
         if test_program not in IMPLEMENTED_TEST_PROGRAMS:
             raise InvalidTestProgram("""INVALID CONFIGURATION: The test program %s is unknown. Valid options are %s"""  % (test_program,  ', '.join(IMPLEMENTED_TEST_PROGRAMS)))
 
