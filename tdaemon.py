@@ -72,7 +72,10 @@ class Watcher(object):
             for name in files:
                 if self.include(name):
                     full_path = os.path.join(root, name)
-                    file_list[full_path] = hashlib.sha224(open(full_path).read()).hexdigest()
+                    if os.path.isfile(full_path):
+                        # preventing fail if the file vanishes
+                        content = open(full_path).read()
+                        file_list[full_path] = hashlib.sha224(content).hexdigest()
             for name in dirs:
                 self.walk(os.path.join(root, name), file_list)
         return file_list

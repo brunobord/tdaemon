@@ -24,7 +24,6 @@ When you're using django, the path to the project must be the path where
 
 ### TODO
 
-    [ ] Fixing bug: when a file vanished, the program fails.
     [ ] implements py.test, if possible
     [ ] Benchmark it with larger files
     [ ] Extend the test utilities to other languages
@@ -32,6 +31,7 @@ When you're using django, the path to the project must be the path where
         image files, etc)
 ### Done
 
+    [X] Fixing bug: when a file vanished, the program fails.
     [X] I remember I made the first bits of the code after reading an article...
         [X] Find the link and name of the original author
         [X] add appropriate credits
