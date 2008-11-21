@@ -12,6 +12,10 @@ import datetime
 import re
 
 IGNORE_EXTENSIONS = ('pyc', 'pyo')
+IMPLEMENTED_TEST_PROGRAMS = ('nose', 'nosetests', 'django')
+
+class InvalidTestProgram(Exception):
+    pass
 
 class Watcher(object):
     """
@@ -22,10 +26,16 @@ class Watcher(object):
     debug = False
 
     def __init__(self, file_path, test_program, debug=False):
+        # check configuration
+        self.check_configuration(test_program)
         self.file_path = file_path
         self.file_list = self.walk(file_path)
         self.test_program = test_program
         self.debug = debug
+
+    def check_configuration(self, test_program):
+        if test_program not in IMPLEMENTED_TEST_PROGRAMS:
+            raise InvalidTestProgram("""INVALID CONFIGURATION: The test program %s is unknown. Valid options are %s"""  % (test_program,  ', '.join(IMPLEMENTED_TEST_PROGRAMS)))
 
     def include(self, name):
         """Returns `True` if the file is not ignored"""
@@ -68,8 +78,11 @@ class Watcher(object):
         elif self.test_program == 'django':
             cmd = "python %s/manage.py test" % self.file_path
 
-        if cmd:
-            self.run(cmd)
+        if not cmd:
+            raise InvalidTestProgram("The test program %s is unknown."
+                "Valid options are `nose` and `django`" % self.test_program)
+
+        self.run(cmd)
 
     def loop(self):
         """Main loop daemon."""
@@ -104,8 +117,11 @@ def main(prog_args=None):
     else:
         path = '.'
 
-    watcher = Watcher(path, opt.test_program, opt.debug)
-    watcher.loop()
+    try:
+        watcher = Watcher(path, opt.test_program, opt.debug)
+        watcher.loop()
+    except Exception, e:
+        print e
 
 
 if __name__ == '__main__':
