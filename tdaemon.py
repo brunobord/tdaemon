@@ -21,7 +21,7 @@ import datetime
 import re
 
 IGNORE_EXTENSIONS = ('pyc', 'pyo')
-IMPLEMENTED_TEST_PROGRAMS = ('nose', 'nosetests', 'django')
+IMPLEMENTED_TEST_PROGRAMS = ('nose', 'nosetests', 'django', 'py')
 
 # -------- Exceptions
 class InvalidTestProgram(Exception):
@@ -98,9 +98,11 @@ class Watcher(object):
         """Execute tests"""
         cmd = None
         if self.test_program in ('nose', 'nosetests'):
-            cmd = "cd %(path)s && nosetests" % {'path': self.file_path}
+            cmd = "cd %s && nosetests" % self.file_path
         elif self.test_program == 'django':
             cmd = "python %s/manage.py test" % self.file_path
+        elif self.test_program == 'py':
+            cmd = 'py.test %s' % self.file_path
 
         if not cmd:
             raise InvalidTestProgram("The test program %s is unknown."
@@ -130,7 +132,7 @@ def main(prog_args=None):
     parser.usage = """Usage: %[prog] [options] [<path>]"""
     parser.add_option("-t", "--test-program", dest="test_program",
         default="nose", help="""specifies the test-program to use. Valid
-        values include `nose` (or `nosetests`) and `django`""")
+        values include `nose` (or `nosetests`), `django` and `py` (for `py.test`)""")
     parser.add_option("-d", "--debug", dest="debug", action="store_true",
         default=False)
 
