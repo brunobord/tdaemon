@@ -21,6 +21,7 @@ import datetime
 import re
 
 IGNORE_EXTENSIONS = ('pyc', 'pyo')
+IGNORE_DIRS = ('.bzr', '.git', '.hg', '.darcs', '.svn')
 IMPLEMENTED_TEST_PROGRAMS = ('nose', 'nosetests', 'django', 'py')
 
 # -------- Exceptions
@@ -69,6 +70,10 @@ class Watcher(object):
         """Walks the walk. nah, seriously: reads the file and stores a hashkey
         corresponding to its content."""
         for root, dirs, files in os.walk(top, topdown=False):
+            if os.path.basename(root) in IGNORE_DIRS:
+                # Do not dig in ignored dirs
+                continue
+            
             for name in files:
                 if self.include(name):
                     full_path = os.path.join(root, name)
@@ -77,7 +82,8 @@ class Watcher(object):
                         content = open(full_path).read()
                         file_list[full_path] = hashlib.sha224(content).hexdigest()
             for name in dirs:
-                self.walk(os.path.join(root, name), file_list)
+                if name not in IGNORE_DIRS:
+                    self.walk(os.path.join(root, name), file_list)
         return file_list
 
     def diff_list(self, list1, list2):
