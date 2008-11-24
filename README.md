@@ -25,10 +25,13 @@ When you're using django, the path to the project must be the path where
 
 ### TODO
 
+    [ ] Bugfix: When doing (e.g.) hg commit, it opens temporary files that are
+        detected as "changed", and the daemon starts tests. It should be ignored (ref. ignore-directories)
     [ ] Benchmark it with larger files
     [ ] Extend the test utilities to other languages
     [ ] Add an "ignore" option to ignore other files (logs, sqlite database,
         image files, etc)
+
 ### Done
 
     [X] implements py.test, if possible
