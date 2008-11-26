@@ -59,10 +59,14 @@ class Watcher(object):
         if test_program not in IMPLEMENTED_TEST_PROGRAMS:
             raise InvalidTestProgram("""INVALID CONFIGURATION: The test program %s is unknown. Valid options are %s"""  % (test_program,  ', '.join(IMPLEMENTED_TEST_PROGRAMS)))
 
-    def include(self, name):
+    def include(self, path):
         """Returns `True` if the file is not ignored"""
         for extension in IGNORE_EXTENSIONS:
-            if name.endswith(extension):
+            if path.endswith(extension):
+                return False
+        parts = path.split(os.path.sep)
+        for part in parts:
+            if part in IGNORE_DIRS:
                 return False
         return True
 
@@ -73,10 +77,10 @@ class Watcher(object):
             if os.path.basename(root) in IGNORE_DIRS:
                 # Do not dig in ignored dirs
                 continue
-            
+
             for name in files:
-                if self.include(name):
-                    full_path = os.path.join(root, name)
+                full_path = os.path.join(root, name)
+                if self.include(full_path):
                     if os.path.isfile(full_path):
                         # preventing fail if the file vanishes
                         content = open(full_path).read()
