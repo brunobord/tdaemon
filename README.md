@@ -25,8 +25,6 @@ When you're using django, the path to the project must be the path where
 
 ### TODO
 
-    [ ] Bugfix: When doing (e.g.) hg commit, it opens temporary files that are
-        detected as "changed", and the daemon starts tests. It should be ignored (ref. ignore-directories)
     [ ] Benchmark it with larger files
     [ ] Extend the test utilities to other languages
     [ ] Add an "ignore" option to ignore other files (logs, sqlite database,
@@ -39,4 +37,6 @@ When you're using django, the path to the project must be the path where
     [X] I remember I made the first bits of the code after reading an article...
         [X] Find the link and name of the original author
         [X] add appropriate credits
+    [X] Bugfix: When doing (e.g.) hg commit, it opens temporary files that are
+        detected as "changed", and the daemon starts tests. It should be ignored (ref. ignore-directories)
 
