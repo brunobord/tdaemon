@@ -25,7 +25,6 @@ When you're using django, the path to the project must be the path where
 
 ### TODO
 
-    [ ] Benchmark it with larger files
     [ ] Extend the test utilities to other languages
     [ ] Add an "ignore" option to ignore other files (logs, sqlite database,
         image files, etc)
@@ -38,5 +37,8 @@ When you're using django, the path to the project must be the path where
         [X] Find the link and name of the original author
         [X] add appropriate credits
     [X] Bugfix: When doing (e.g.) hg commit, it opens temporary files that are
-        detected as "changed", and the daemon starts tests. It should be ignored (ref. ignore-directories)
-
+        detected as "changed", and the daemon starts tests. It should be ignored
+        (ref. ignore-directories)
+    [X] Feature: If the scanned directory size if larger than the option limit,
+    asking for the user to accept processing or not. Default option limit is 25MB
+    
