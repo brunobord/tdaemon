@@ -90,6 +90,11 @@ class Watcher(object):
                     self.walk(os.path.join(root, name), file_list)
         return file_list
 
+    def file_sizes(self):
+        size = sum(map(os.path.getsize, self.file_list))
+        return size / 1024 / 1024
+            
+
     def diff_list(self, list1, list2):
         """Extracts differences between lists. For debug purposes"""
         for key in list1:
@@ -145,6 +150,8 @@ def main(prog_args=None):
         values include `nose` (or `nosetests`), `django` and `py` (for `py.test`)""")
     parser.add_option("-d", "--debug", dest="debug", action="store_true",
         default=False)
+    parser.add_option('-s', '--size-max', dest='size_max', default=25, type="int",
+        help="Sets the maximum size (in MB) of files.")
 
     opt, args = parser.parse_args(prog_args)
 
@@ -155,10 +162,22 @@ def main(prog_args=None):
 
     try:
         watcher = Watcher(path, opt.test_program, opt.debug)
-        watcher.loop()
+        agree = True
+        if watcher.file_sizes() > opt.size_max:
+            answer = raw_input(
+            "It looks like the total file size is larger than the `max size` option."
+            "\nThis may slow down the file comparison process, and thus the daemon performance."
+            "\nDo you wish to continue? [y/N] ").lower()
+            if not answer.startswith('y'):
+                agree = False
+                
+        if agree:
+            print "Ready to watch file changes..."
+            watcher.loop()
     except Exception, e:
         print e
 
+    print "Bye"
 
 if __name__ == '__main__':
     main()
