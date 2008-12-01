@@ -93,7 +93,7 @@ class Watcher(object):
     def file_sizes(self):
         size = sum(map(os.path.getsize, self.file_list))
         return size / 1024 / 1024
-            
+
 
     def diff_list(self, list1, list2):
         """Extracts differences between lists. For debug purposes"""
@@ -163,14 +163,15 @@ def main(prog_args=None):
     try:
         watcher = Watcher(path, opt.test_program, opt.debug)
         agree = True
-        if watcher.file_sizes() > opt.size_max:
+        watcher_file_size = watcher.file_sizes()
+        if watcher_file_size > opt.size_max:
             answer = raw_input(
-            "It looks like the total file size is larger than the `max size` option."
+            "It looks like the total file size (%dMb) is larger than the `max size` option (%dMb)."
             "\nThis may slow down the file comparison process, and thus the daemon performance."
-            "\nDo you wish to continue? [y/N] ").lower()
+            "\nDo you wish to continue? [y/N] "  % (watcher_file_size, opt.size_max)).lower()
             if not answer.startswith('y'):
                 agree = False
-                
+
         if agree:
             print "Ready to watch file changes..."
             watcher.loop()
