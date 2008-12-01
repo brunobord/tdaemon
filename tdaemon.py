@@ -63,15 +63,8 @@ class Watcher(object):
             )
 
         # checking test_program option
-<<<<<<< HEAD:tdaemon.py
-        if test_program not in IMPLEMENTED_TEST_PROGRAMS:
-            raise InvalidTestProgram("INVALID CONFIGURATION: "
-            "The test program %s is unknown. Valid options are %s"  %
-                (test_program,  ', '.join(IMPLEMENTED_TEST_PROGRAMS)))
-=======
         if not custom_command and test_program not in IMPLEMENTED_TEST_PROGRAMS:
             raise InvalidTestProgram("""INVALID CONFIGURATION: The test program %s is unknown. Valid options are %s"""  % (test_program,  ', '.join(IMPLEMENTED_TEST_PROGRAMS)))
->>>>>>> custom-command:tdaemon.py
 
     def include(self, path):
         """Returns `True` if the file is not ignored"""
