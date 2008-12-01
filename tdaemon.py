@@ -51,13 +51,16 @@ class Watcher(object):
         """Checks if configuration is ok."""
         # checking filepath
         if not os.path.isdir(file_path):
-            raise InvalidFilePath("""INVALID CONFIGURATION: file path %s is not a directory""" %
+            raise InvalidFilePath("INVALID CONFIGURATION: "
+            "file path %s is not a directory" %
                 os.path.abspath(file_path)
             )
 
         # checking test_program option
         if test_program not in IMPLEMENTED_TEST_PROGRAMS:
-            raise InvalidTestProgram("""INVALID CONFIGURATION: The test program %s is unknown. Valid options are %s"""  % (test_program,  ', '.join(IMPLEMENTED_TEST_PROGRAMS)))
+            raise InvalidTestProgram("INVALID CONFIGURATION: "
+            "The test program %s is unknown. Valid options are %s"  %
+                (test_program,  ', '.join(IMPLEMENTED_TEST_PROGRAMS)))
 
     def include(self, path):
         """Returns `True` if the file is not ignored"""
@@ -146,12 +149,12 @@ def main(prog_args=None):
     parser = optparse.OptionParser()
     parser.usage = """Usage: %[prog] [options] [<path>]"""
     parser.add_option("-t", "--test-program", dest="test_program",
-        default="nose", help="""specifies the test-program to use. Valid
-        values include `nose` (or `nosetests`), `django` and `py` (for `py.test`)""")
+        default="nose", help="specifies the test-program to use. Valid values"
+        " include `nose` (or `nosetests`), `django` and `py` (for `py.test`)")
     parser.add_option("-d", "--debug", dest="debug", action="store_true",
         default=False)
-    parser.add_option('-s', '--size-max', dest='size_max', default=25, type="int",
-        help="Sets the maximum size (in MB) of files.")
+    parser.add_option('-s', '--size-max', dest='size_max', default=25,
+        type="int", help="Sets the maximum size (in MB) of files.")
 
     opt, args = parser.parse_args(prog_args)
 
