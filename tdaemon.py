@@ -39,22 +39,17 @@ class Watcher(object):
     """
     file_list = {}
     debug = False
-    use_custom_command = False
 
-    def __init__(self, file_path, test_program, debug=False, custom_command=None):
+    def __init__(self, file_path, test_program, debug=False):
         # check configuration
-        self.check_configuration(file_path, test_program, custom_command)
+        self.check_configuration(file_path, test_program)
         self.file_path = file_path
         self.file_list = self.walk(file_path)
-        if not custom_command:
-            self.test_program = test_program
-        else:
-            self.test_program = custom_command
-            self.use_custom_command = True
+        self.test_program = test_program
 
         self.debug = debug
 
-    def check_configuration(self, file_path, test_program, custom_command):
+    def check_configuration(self, file_path, test_program):
         """Checks if configuration is ok."""
         # checking filepath
         if not os.path.isdir(file_path):
@@ -63,9 +58,6 @@ class Watcher(object):
                 os.path.abspath(file_path)
             )
 
-        # checking test_program option
-        if not custom_command and test_program not in IMPLEMENTED_TEST_PROGRAMS:
-            raise InvalidTestProgram("""INVALID CONFIGURATION: The test program %s is unknown. Valid options are %s"""  % (test_program,  ', '.join(IMPLEMENTED_TEST_PROGRAMS)))
 
     def include(self, path):
         """Returns `True` if the file is not ignored"""
@@ -120,9 +112,7 @@ class Watcher(object):
     def run_tests(self):
         """Execute tests"""
         cmd = None
-        if self.use_custom_command:
-            cmd = self.test_program
-        elif self.test_program in ('nose', 'nosetests'):
+        if self.test_program in ('nose', 'nosetests'):
             cmd = "cd %s && nosetests" % self.file_path
         elif self.test_program == 'django':
             cmd = "python %s/manage.py test" % self.file_path
@@ -162,26 +152,8 @@ def main(prog_args=None):
         default=False)
     parser.add_option('-s', '--size-max', dest='size_max', default=25,
         type="int", help="Sets the maximum size (in MB) of files.")
-    parser.add_option('-c', '--custom-command', dest='custom_command',
-        default=None, help="Specifies the test command to run."
-        "\nBIG FAT WARNING: This will run a shell command. Use it at your own"
-        "risks!!!"
-        "\nIf the program deletes your whole project, it'll be you fault!")
 
     opt, args = parser.parse_args(prog_args)
-
-    if opt.custom_command:
-        answer = raw_input(
-            'BIG FAT WARNING! You are about to run the command\n\n   $ %s\n\n'
-            "Every time any file will be added/deleted/edited in your project."
-            "\nYou must be aware that any shell command automatically ran may"
-            "erase or corrupt your files."
-            "\nUSE VERY CAREFULLY!!!"
-            "\nNow that you've been warned, do you still want to go on? [y/N] " %
-            opt.custom_command
-        )
-        if not answer.startswith('y'):
-            sys.exit("Ok, bye...")
 
 
     if args[1:]:
@@ -190,7 +162,7 @@ def main(prog_args=None):
         path = '.'
 
     try:
-        watcher = Watcher(path, opt.test_program, opt.debug, opt.custom_command)
+        watcher = Watcher(path, opt.test_program, opt.debug)
         agree = True
         watcher_file_size = watcher.file_sizes()
         if watcher_file_size > opt.size_max:
