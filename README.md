@@ -25,7 +25,6 @@ When you're using django, the path to the project must be the path where
 
 ### TODO
 
-    [ ] Erase the custom command option. Too dangerous
     [ ] Add an "custom argument" option. The user may want to run specific
         commands, but the only way to do so is to send arguments rather than the
         whole external command. Tests must pass, though (no `&`, for example)
@@ -45,6 +44,7 @@ When you're using django, the path to the project must be the path where
         (ref. ignore-directories)
     [X] Feature: If the scanned directory size if larger than the option limit,
     asking for the user to accept processing or not. Default option limit is 25MB
-    [X] Add the possibility to run a custom command.
+    [X] OBSOLETE: Add the possibility to run a custom command.
         (eg. ``python manage.py test myapp.MyTest``)
+    [X] Erase the custom command option. Too dangerous
 
