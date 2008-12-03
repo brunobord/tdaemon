@@ -36,11 +36,14 @@ For example, try out ``py.test``:
 
 Three test programs are available:
 
-* nosetests (keyword is `nose` or `nosetests`)
-* django (keyword is `django`)
-* py.test (keyword is `py`)
+* [nosetests](http://somethingaboutorange.com/mrl/projects/nose/) (keyword is `nose` or `nosetests`)
+* [django](http://docs.djangoproject.com/en/dev/topics/testing/) (keyword is `django`)
+* [py.test](http://codespeak.net/py/dist/test.html) (keyword is `py`)
 
-When you're using django, the path to the project must be the path where
+Bear in mind that if you want to use one of these program, you **must** install
+them on your system.
+
+*Note* : When you're using django, the path to the project must be the path where
 `manage.py` lives.
 
 #### The max filesize
@@ -65,6 +68,7 @@ with a total archive of more than 100MB.
     [ ] Extend the test utilities to other languages
     [ ] Add an "ignore" option to ignore other files (logs, sqlite database,
         image files, etc)
+    [ ] Check the only default dependency: ``nosetests``.
 
 ### Done
 
