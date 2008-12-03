@@ -68,7 +68,8 @@ with a total archive of more than 100MB.
     [ ] Extend the test utilities to other languages
     [ ] Add an "ignore" option to ignore other files (logs, sqlite database,
         image files, etc)
-    [ ] Check the only default dependency: ``nosetests``.
+    [ ] Check other pythonic dependencies (django, py.test). Won't be possible
+        for non-python test-programs, though
 
 ### Done
 
@@ -85,4 +86,5 @@ with a total archive of more than 100MB.
     [X] OBSOLETE: Add the possibility to run a custom command.
         (eg. ``python manage.py test myapp.MyTest``)
     [X] Erase the custom command option. Too dangerous
+    [X] Check the only default dependency: ``nosetests``.
 

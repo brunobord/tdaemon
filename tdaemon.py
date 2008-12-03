@@ -10,6 +10,7 @@ The present code is published under the terms of the MIT License. See LICENSE
 file for more details.
 """
 
+
 import sys
 import os
 from stat import *
@@ -47,6 +48,8 @@ class Watcher(object):
         self.file_list = self.walk(file_path)
         self.test_program = test_program
 
+        self.check_dependencies()
+
         self.debug = debug
 
     def check_configuration(self, file_path, test_program):
@@ -58,6 +61,14 @@ class Watcher(object):
                 os.path.abspath(file_path)
             )
 
+    def check_dependencies(self):
+        "Checks if the test program is available in the python environnement"
+        if self.test_program == 'nose':
+            try:
+                import nose
+            except ImportError:
+                sys.exit('Nosetests is not available on your system.'
+                ' Please install it and try to run it again')
 
     def include(self, path):
         """Returns `True` if the file is not ignored"""
