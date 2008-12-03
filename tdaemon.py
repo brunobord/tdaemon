@@ -31,6 +31,7 @@ class InvalidTestProgram(Exception):
 class InvalidFilePath(Exception):
     pass
 
+
 class Watcher(object):
     """
     Watcher class. This is the daemon that is watching every file in the
