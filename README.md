@@ -25,6 +25,10 @@ When you're using django, the path to the project must be the path where
 
 ### TODO
 
+    [ ] Erase the custom command option. Too dangerous
+    [ ] Add an "custom argument" option. The user may want to run specific
+        commands, but the only way to do so is to send arguments rather than the
+        whole external command. Tests must pass, though (no `&`, for example)
     [ ] Extend the test utilities to other languages
     [ ] Add an "ignore" option to ignore other files (logs, sqlite database,
         image files, etc)
