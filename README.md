@@ -7,12 +7,32 @@ changes (the content is edited), it runs the tests.
 
 Put the tdaemon somewhere where it's executable.
 
-You may run like this:
+### Basic Usage
 
-    $ tdaemon.py --test-program=nose /path/to/python/project
+Simply run this:
 
-The daemon starts watching the directory and subdirectories. As soon as one file
-changes, the daemon runs the nosetests and you may watch the result.
+    $ python /path/to/tdaemon.py
+
+The daemon starts watching the current directory and subdirectories. As soon as
+one file changes, the daemon runs ``nosetests`` and you may watch the result.
+
+### Advanced usage
+
+#### Change the scanned path
+
+If you want to run the daemon from another directory than your current
+directory, just run:
+
+    $ tdaemon.py /path/to/your/project
+
+
+#### Change the test program
+
+For example, try out ``py.test``:
+
+    $ tdaemon.py --test-program=py
+
+``Nosetests`` is the default test program, but you may use others.
 
 Three test programs are available:
 
@@ -22,6 +42,20 @@ Three test programs are available:
 
 When you're using django, the path to the project must be the path where
 `manage.py` lives.
+
+#### The max filesize
+
+The ``tdaemon`` first checks the total filesize you want to scan. If the total
+file size exceeds his quota (which is 25MB by default), the program asks you if
+you still want to go on with this. You may be informed that scanning large
+directories may take some time, and thus alter the daemon performances.
+
+You can change this quota by using the ``--size-max`` argument. For example:
+
+    $ tdaemon --size-max=100
+
+With this argument, the programm will only ask for your permission to proceed
+with a total archive of more than 100MB.
 
 ### TODO
 
