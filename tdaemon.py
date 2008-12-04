@@ -23,7 +23,7 @@ import re
 
 IGNORE_EXTENSIONS = ('pyc', 'pyo')
 IGNORE_DIRS = ('.bzr', '.git', '.hg', '.darcs', '.svn')
-IMPLEMENTED_TEST_PROGRAMS = ('nose', 'nosetests', 'django', 'py')
+IMPLEMENTED_TEST_PROGRAMS = ('nose', 'nosetests', 'django', 'py', 'symfony')
 
 # -------- Exceptions
 class InvalidTestProgram(Exception):
@@ -129,10 +129,13 @@ class Watcher(object):
             cmd = "python %s/manage.py test" % self.file_path
         elif self.test_program == 'py':
             cmd = 'py.test %s' % self.file_path
+        elif self.test_program == 'symfony':
+            cmd = 'symfony test-all'
 
         if not cmd:
             raise InvalidTestProgram("The test program %s is unknown."
-                "Valid options are `nose` and `django`" % self.test_program)
+                "Valid options are `nose`, `django`, `py` and `symfony`"
+                    % self.test_program)
 
         self.run(cmd)
 
@@ -158,7 +161,8 @@ def main(prog_args=None):
     parser.usage = """Usage: %[prog] [options] [<path>]"""
     parser.add_option("-t", "--test-program", dest="test_program",
         default="nose", help="specifies the test-program to use. Valid values"
-        " include `nose` (or `nosetests`), `django` and `py` (for `py.test`)")
+        " include `nose` (or `nosetests`), `django`, `py` (for `py.test`) "
+        'and `symfony`')
     parser.add_option("-d", "--debug", dest="debug", action="store_true",
         default=False)
     parser.add_option('-s', '--size-max', dest='size_max', default=25,
