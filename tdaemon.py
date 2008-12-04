@@ -13,13 +13,13 @@ file for more details.
 
 import sys
 import os
-from stat import *
+#from stat import *
 import optparse
 from time import sleep
 import hashlib
 import commands
 import datetime
-import re
+#import re
 
 IGNORE_EXTENSIONS = ('pyc', 'pyo')
 IGNORE_DIRS = ('.bzr', '.git', '.hg', '.darcs', '.svn')
@@ -27,9 +27,11 @@ IMPLEMENTED_TEST_PROGRAMS = ('nose', 'nosetests', 'django', 'py')
 
 # -------- Exceptions
 class InvalidTestProgram(Exception):
+    """Raised as soon as an unexpected test program is chosen"""
     pass
 
 class InvalidFilePath(Exception):
+    """Raised if the path to project/module is unknown/missing."""
     pass
 
 
@@ -60,6 +62,10 @@ class Watcher(object):
             "file path %s is not a directory" %
                 os.path.abspath(file_path)
             )
+
+        if not test_program in IMPLEMENTED_TEST_PROGRAMS:
+            raise InvalidTestProgram('The `%s` is unknown, or not yet '
+            'implemented. Please chose another one.' % test_program)
 
     def check_dependencies(self):
         "Checks if the test program is available in the python environnement"
@@ -95,13 +101,15 @@ class Watcher(object):
                     if os.path.isfile(full_path):
                         # preventing fail if the file vanishes
                         content = open(full_path).read()
-                        file_list[full_path] = hashlib.sha224(content).hexdigest()
+                        hashcode = hashlib.sha224(content).hexdigest()
+                        file_list[full_path] = hashcode
             for name in dirs:
                 if name not in IGNORE_DIRS:
                     self.walk(os.path.join(root, name), file_list)
         return file_list
 
     def file_sizes(self):
+        """Returns total filesize (in MB)"""
         size = sum(map(os.path.getsize, self.file_list))
         return size / 1024 / 1024
 
@@ -178,9 +186,12 @@ def main(prog_args=None):
         watcher_file_size = watcher.file_sizes()
         if watcher_file_size > opt.size_max:
             answer = raw_input(
-            "It looks like the total file size (%dMb) is larger than the `max size` option (%dMb)."
-            "\nThis may slow down the file comparison process, and thus the daemon performance."
-            "\nDo you wish to continue? [y/N] "  % (watcher_file_size, opt.size_max)).lower()
+            "It looks like the total file size (%dMb) is larger than the "
+            "`max size` option (%dMb)."
+            "\nThis may slow down the file comparison process, and thus the "
+            "daemon performance."
+            "\nDo you wish to continue? [y/N] "  %
+                (watcher_file_size, opt.size_max)).lower()
             if not answer.startswith('y'):
                 agree = False
 
