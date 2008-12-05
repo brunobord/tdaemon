@@ -34,6 +34,19 @@ class InvalidFilePath(Exception):
     """Raised if the path to project/module is unknown/missing."""
     pass
 
+class CancelDueToUserRequest(Exception):
+    """Raised when user wants to cancel execution"""
+    pass
+
+# -------- Utils
+def ask(message='Are you sure? [y/N]'):
+    """Asks the user his opinion."""
+    agree = False
+    answer = raw_input(message).lower()
+    if answer.startswith('y'):
+        agree = True
+    return agree
+
 
 class Watcher(object):
     """
@@ -71,10 +84,8 @@ class Watcher(object):
             'implemented. Please chose another one.' % test_program)
 
         if custom_args:
-            print "WARNING!!!\n" \
-            "You are about to run the following command\n\n" \
-            "   $ %s %s\n\n" \
-            "Are you sure you still want to proceed?" % (test_program, custom_args)
+            if not ask("WARNING!!!\nYou are about to run the following command\n\n   $ %s %s\n\nAre you sure you still want to proceed [y/N]? " % (test_program, custom_args)):
+                raise CancelDueToUserRequest('Test cancelled...')
 
     def check_dependencies(self):
         "Checks if the test program is available in the python environnement"
@@ -200,22 +211,19 @@ def main(prog_args=None):
 
     try:
         watcher = Watcher(path, opt.test_program, opt.debug, opt.custom_args)
-        agree = True
         watcher_file_size = watcher.file_sizes()
         if watcher_file_size > opt.size_max:
-            answer = raw_input(
-            "It looks like the total file size (%dMb) is larger than the "
-            "`max size` option (%dMb)."
-            "\nThis may slow down the file comparison process, and thus the "
-            "daemon performance."
-            "\nDo you wish to continue? [y/N] "  %
-                (watcher_file_size, opt.size_max)).lower()
-            if not answer.startswith('y'):
-                agree = False
+            message =  "It looks like the total file size (%dMb) is larger " \
+                "than the  `max size` option (%dMb)." \
+                "\nThis may slow down the file comparison process, and thus " \
+                "the daemon performance." \
+                "\nDo you wish to continue? [y/N] " % (watcher_file_size, opt.size_max)
 
-        if agree:
-            print "Ready to watch file changes..."
-            watcher.loop()
+            if not ask(message):
+                raise CancelDueToUserRequest('Ok, thx, bye...')
+
+        print "Ready to watch file changes..."
+        watcher.loop()
     except Exception, e:
         print e
 
