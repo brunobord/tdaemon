@@ -46,6 +46,27 @@ them on your system.
 *Note* : When you're using django, the path to the project must be the path where
 `manage.py` lives.
 
+#### Add parameters to your test program
+
+Most test programs allow you to test using specifig arguments, to test a small
+part of your project, or using a specific setting. If you want to append
+specific arguments to your command line, use the ``--custom-args`` parameter
+like this::
+
+    $ tdaemon.py --custom-args="myapp.MyTestClass" --test-program=django
+
+The above command will execute the following command in the current directory:
+
+    $ ./manage.py myapp.MyTestClass
+
+Please refer to the test program manual / documentation to find out which
+additional argument you may use here.
+
+**WARNING**: Please note that every time you're going to use this option, it
+will require your confirmation. You are being warned that any command that
+would break your system, erase some important data, etc. is
+**YOUR PLAIN FAULT!**. Not mine. So BE CAREFUL. Please.
+
 #### The max filesize
 
 The ``tdaemon`` first checks the total filesize you want to scan. If the total

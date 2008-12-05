@@ -43,18 +43,21 @@ class Watcher(object):
     file_list = {}
     debug = False
 
-    def __init__(self, file_path, test_program, debug=False):
+    def __init__(self, file_path, test_program, debug=False, custom_args=''):
         # check configuration
-        self.check_configuration(file_path, test_program)
+        self.check_configuration(file_path, test_program, custom_args)
+
         self.file_path = file_path
         self.file_list = self.walk(file_path)
         self.test_program = test_program
+        self.custom_args = custom_args
 
         self.check_dependencies()
-
         self.debug = debug
+        self.cmd = self.get_cmd()
 
-    def check_configuration(self, file_path, test_program):
+
+    def check_configuration(self, file_path, test_program, custom_args):
         """Checks if configuration is ok."""
         # checking filepath
         if not os.path.isdir(file_path):
@@ -67,6 +70,12 @@ class Watcher(object):
             raise InvalidTestProgram('The `%s` is unknown, or not yet '
             'implemented. Please chose another one.' % test_program)
 
+        if custom_args:
+            print "WARNING!!!\n" \
+            "You are about to run the following command\n\n" \
+            "   $ %s %s\n\n" \
+            "Are you sure you still want to proceed?" % (test_program, custom_args)
+
     def check_dependencies(self):
         "Checks if the test program is available in the python environnement"
         if self.test_program == 'nose':
@@ -76,6 +85,25 @@ class Watcher(object):
                 sys.exit('Nosetests is not available on your system.'
                 ' Please install it and try to run it again')
 
+    def get_cmd(self):
+        cmd = None
+        if self.test_program in ('nose', 'nosetests'):
+            cmd = "cd %s && nosetests" % self.file_path
+        elif self.test_program == 'django':
+            cmd = "python %s/manage.py test" % self.file_path
+        elif self.test_program == 'py':
+            cmd = 'py.test %s' % self.file_path
+
+        if not cmd:
+            raise InvalidTestProgram("The test program %s is unknown."
+                "Valid options are `nose` and `django`" % self.test_program)
+
+        # adding custom args
+        if self.custom_args:
+            cmd = '%s %s' % (cmd, self.custom_args)
+        return cmd
+
+    # Path manipulation
     def include(self, path):
         """Returns `True` if the file is not ignored"""
         for extension in IGNORE_EXTENSIONS:
@@ -130,19 +158,7 @@ class Watcher(object):
 
     def run_tests(self):
         """Execute tests"""
-        cmd = None
-        if self.test_program in ('nose', 'nosetests'):
-            cmd = "cd %s && nosetests" % self.file_path
-        elif self.test_program == 'django':
-            cmd = "python %s/manage.py test" % self.file_path
-        elif self.test_program == 'py':
-            cmd = 'py.test %s' % self.file_path
-
-        if not cmd:
-            raise InvalidTestProgram("The test program %s is unknown."
-                "Valid options are `nose` and `django`" % self.test_program)
-
-        self.run(cmd)
+        self.run(self.cmd)
 
     def loop(self):
         """Main loop daemon."""
@@ -171,9 +187,11 @@ def main(prog_args=None):
         default=False)
     parser.add_option('-s', '--size-max', dest='size_max', default=25,
         type="int", help="Sets the maximum size (in MB) of files.")
+    parser.add_option('--custom-args', dest='custom_args', default='',
+        type="str",
+        help="Defines custom arguments to pass after the test program command")
 
     opt, args = parser.parse_args(prog_args)
-
 
     if args[1:]:
         path = args[1]
@@ -181,7 +199,7 @@ def main(prog_args=None):
         path = '.'
 
     try:
-        watcher = Watcher(path, opt.test_program, opt.debug)
+        watcher = Watcher(path, opt.test_program, opt.debug, opt.custom_args)
         agree = True
         watcher_file_size = watcher.file_sizes()
         if watcher_file_size > opt.size_max:
