@@ -49,7 +49,6 @@ def ask(message='Are you sure? [y/N]'):
 
 def escapearg(args):
     special_chars = '#&;`|*?~<>^()[]{}$\\'
-    print special_chars
     for char in special_chars:
         args = args.replace(char, '')
     return args
@@ -66,13 +65,14 @@ class Watcher(object):
         # Safe filter
         custom_args = escapearg(custom_args)
 
-        # check configuration
-        self.check_configuration(file_path, test_program, custom_args)
-
         self.file_path = file_path
         self.file_list = self.walk(file_path)
         self.test_program = test_program
         self.custom_args = custom_args
+
+        # check configuration
+        self.check_configuration(file_path, test_program, custom_args)
+
 
         self.check_dependencies()
         self.debug = debug
@@ -93,7 +93,7 @@ class Watcher(object):
             'implemented. Please chose another one.' % test_program)
 
         if custom_args:
-            if not ask("WARNING!!!\nYou are about to run the following command\n\n   $ %s %s\n\nAre you sure you still want to proceed [y/N]? " % (test_program, custom_args)):
+            if not ask("WARNING!!!\nYou are about to run the following command\n\n   $ %s\n\nAre you sure you still want to proceed [y/N]? " % self.get_cmd(test_program)):
                 raise CancelDueToUserRequest('Test cancelled...')
 
     def check_dependencies(self):
@@ -105,18 +105,21 @@ class Watcher(object):
                 sys.exit('Nosetests is not available on your system.'
                 ' Please install it and try to run it again')
 
-    def get_cmd(self):
+    def get_cmd(self, test_program=None):
+        if not test_program:
+            test_program = self.test_program
+
         cmd = None
-        if self.test_program in ('nose', 'nosetests'):
-            cmd = "cd %s && nosetests" % self.file_path
-        elif self.test_program == 'django':
+        if test_program in ('nose', 'nosetests'):
+            cmd = "nosetests %s" % self.file_path
+        elif test_program == 'django':
             cmd = "python %s/manage.py test" % self.file_path
-        elif self.test_program == 'py':
+        elif test_program == 'py':
             cmd = 'py.test %s' % self.file_path
 
         if not cmd:
             raise InvalidTestProgram("The test program %s is unknown."
-                "Valid options are `nose` and `django`" % self.test_program)
+                "Valid options `nose`, `django` and `py`" % test_program)
 
         # adding custom args
         if self.custom_args:
