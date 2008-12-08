@@ -47,6 +47,12 @@ def ask(message='Are you sure? [y/N]'):
         agree = True
     return agree
 
+def escapearg(args):
+    special_chars = '#&;`|*?~<>^()[]{}$\\'
+    print special_chars
+    for char in special_chars:
+        args = args.replace(char, '')
+    return args
 
 class Watcher(object):
     """
@@ -57,6 +63,9 @@ class Watcher(object):
     debug = False
 
     def __init__(self, file_path, test_program, debug=False, custom_args=''):
+        # Safe filter
+        custom_args = escapearg(custom_args)
+
         # check configuration
         self.check_configuration(file_path, test_program, custom_args)
 
