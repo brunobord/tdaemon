@@ -73,7 +73,6 @@ class Watcher(object):
         # check configuration
         self.check_configuration(file_path, test_program, custom_args)
 
-
         self.check_dependencies()
         self.debug = debug
         self.cmd = self.get_cmd()
@@ -93,7 +92,7 @@ class Watcher(object):
             'implemented. Please chose another one.' % test_program)
 
         if custom_args:
-            if not ask("WARNING!!!\nYou are about to run the following command\n\n   $ %s\n\nAre you sure you still want to proceed [y/N]? " % self.get_cmd(test_program)):
+            if not ask("WARNING!!!\nYou are about to run the following command\n\n   $ %s\n\nAre you sure you still want to proceed [y/N]? " % self.get_cmd()):
                 raise CancelDueToUserRequest('Test cancelled...')
 
     def check_dependencies(self):
@@ -105,21 +104,20 @@ class Watcher(object):
                 sys.exit('Nosetests is not available on your system.'
                 ' Please install it and try to run it again')
 
-    def get_cmd(self, test_program=None):
-        if not test_program:
-            test_program = self.test_program
+    def get_cmd(self):
+        """Returns the full command to be executed at runtime"""
 
         cmd = None
-        if test_program in ('nose', 'nosetests'):
+        if self.test_program in ('nose', 'nosetests'):
             cmd = "nosetests %s" % self.file_path
-        elif test_program == 'django':
+        elif self.test_program == 'django':
             cmd = "python %s/manage.py test" % self.file_path
-        elif test_program == 'py':
+        elif self.test_program == 'py':
             cmd = 'py.test %s' % self.file_path
 
         if not cmd:
             raise InvalidTestProgram("The test program %s is unknown."
-                "Valid options `nose`, `django` and `py`" % test_program)
+                "Valid options `nose`, `django` and `py`" % self.test_program)
 
         # adding custom args
         if self.custom_args:
