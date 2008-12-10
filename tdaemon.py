@@ -103,6 +103,12 @@ class Watcher(object):
             except ImportError:
                 sys.exit('Nosetests is not available on your system.'
                 ' Please install it and try to run it again')
+        if self.test_program == 'py':
+            try:
+                import py
+            except:
+                sys.exit('py.test is not available on your system.'
+                ' Please install it and try to run it again')
 
     def get_cmd(self):
         """Returns the full command to be executed at runtime"""
