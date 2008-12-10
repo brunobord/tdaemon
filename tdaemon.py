@@ -109,6 +109,13 @@ class Watcher(object):
             except:
                 sys.exit('py.test is not available on your system.'
                 ' Please install it and try to run it again')
+        if self.test_program == 'django':
+            try:
+                import django
+            except:
+                sys.exit('django is not available on your system.'
+                ' Please install it and try to run it again')
+
 
     def get_cmd(self):
         """Returns the full command to be executed at runtime"""
