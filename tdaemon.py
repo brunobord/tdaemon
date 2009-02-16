@@ -13,13 +13,11 @@ file for more details.
 
 import sys
 import os
-#from stat import *
 import optparse
 from time import sleep
 import hashlib
 import commands
 import datetime
-#import re
 
 IGNORE_EXTENSIONS = ('pyc', 'pyo')
 IGNORE_DIRS = ('.bzr', '.git', '.hg', '.darcs', '.svn')
