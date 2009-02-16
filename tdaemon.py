@@ -48,6 +48,8 @@ def ask(message='Are you sure? [y/N]'):
     return agree
 
 def escapearg(args):
+    """Escapes characters you don't want in arguments (preventing shell
+    injection)"""
     special_chars = '#&;`|*?~<>^()[]{}$\\'
     for char in special_chars:
         args = args.replace(char, '')
@@ -82,14 +84,12 @@ class Watcher(object):
         """Checks if configuration is ok."""
         # checking filepath
         if not os.path.isdir(file_path):
-            raise InvalidFilePath("INVALID CONFIGURATION: "
-            "file path %s is not a directory" %
+            raise InvalidFilePath("INVALID CONFIGURATION: file path %s is not a directory" %
                 os.path.abspath(file_path)
             )
 
         if not test_program in IMPLEMENTED_TEST_PROGRAMS:
-            raise InvalidTestProgram('The `%s` is unknown, or not yet '
-            'implemented. Please chose another one.' % test_program)
+            raise InvalidTestProgram('The `%s` is unknown, or not yet implemented. Please chose another one.' % test_program)
 
         if custom_args:
             if not ask("WARNING!!!\nYou are about to run the following command\n\n   $ %s\n\nAre you sure you still want to proceed [y/N]? " % self.get_cmd()):
@@ -101,20 +101,17 @@ class Watcher(object):
             try:
                 import nose
             except ImportError:
-                sys.exit('Nosetests is not available on your system.'
-                ' Please install it and try to run it again')
+                sys.exit('Nosetests is not available on your system. Please install it and try to run it again')
         if self.test_program == 'py':
             try:
                 import py
             except:
-                sys.exit('py.test is not available on your system.'
-                ' Please install it and try to run it again')
+                sys.exit('py.test is not available on your system. Please install it and try to run it again')
         if self.test_program == 'django':
             try:
                 import django
             except:
-                sys.exit('django is not available on your system.'
-                ' Please install it and try to run it again')
+                sys.exit('django is not available on your system. Please install it and try to run it again')
 
 
     def get_cmd(self):
@@ -129,8 +126,7 @@ class Watcher(object):
             cmd = 'py.test %s' % self.file_path
 
         if not cmd:
-            raise InvalidTestProgram("The test program %s is unknown."
-                "Valid options `nose`, `django` and `py`" % self.test_program)
+            raise InvalidTestProgram("The test program %s is unknown. Valid options are: `nose`, `django` and `py`" % self.test_program)
 
         # adding custom args
         if self.custom_args:
@@ -215,8 +211,8 @@ def main(prog_args=None):
     parser = optparse.OptionParser()
     parser.usage = """Usage: %[prog] [options] [<path>]"""
     parser.add_option("-t", "--test-program", dest="test_program",
-        default="nose", help="specifies the test-program to use. Valid values"
-        " include `nose` (or `nosetests`), `django` and `py` (for `py.test`)")
+        default="nose",
+        help="specifies the test-program to use. Valid values include `nose` (or `nosetests`), `django` and `py` (for `py.test`)")
     parser.add_option("-d", "--debug", dest="debug", action="store_true",
         default=False)
     parser.add_option('-s', '--size-max', dest='size_max', default=25,
@@ -236,11 +232,7 @@ def main(prog_args=None):
         watcher = Watcher(path, opt.test_program, opt.debug, opt.custom_args)
         watcher_file_size = watcher.file_sizes()
         if watcher_file_size > opt.size_max:
-            message =  "It looks like the total file size (%dMb) is larger " \
-                "than the  `max size` option (%dMb)." \
-                "\nThis may slow down the file comparison process, and thus " \
-                "the daemon performance." \
-                "\nDo you wish to continue? [y/N] " % (watcher_file_size, opt.size_max)
+            message =  "It looks like the total file size (%dMb) is larger  than the `max size` option (%dMb).\nThis may slow down the file comparison process, and thus the daemon performances.\nDo you wish to continue? [y/N] " % (watcher_file_size, opt.size_max)
 
             if not ask(message):
                 raise CancelDueToUserRequest('Ok, thx, bye...')
