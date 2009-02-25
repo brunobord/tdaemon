@@ -21,7 +21,9 @@ import datetime
 
 IGNORE_EXTENSIONS = ('pyc', 'pyo')
 IGNORE_DIRS = ('.bzr', '.git', '.hg', '.darcs', '.svn')
-IMPLEMENTED_TEST_PROGRAMS = ('nose', 'nosetests', 'django', 'py')
+IMPLEMENTED_TEST_PROGRAMS = ('nose', 'nosetests', 'django', 'py', 'symfony',
+    'jelix',
+)
 
 # -------- Exceptions
 class InvalidTestProgram(Exception):
@@ -187,6 +189,26 @@ class Watcher(object):
     def run_tests(self):
         """Execute tests"""
         self.run(self.cmd)
+        cmd = None
+        if self.test_program in ('nose', 'nosetests'):
+            cmd = "cd %s && nosetests" % self.file_path
+        elif self.test_program == 'django':
+            cmd = "python %s/manage.py test" % self.file_path
+        elif self.test_program == 'py':
+            cmd = 'py.test %s' % self.file_path
+        elif self.test_program == 'symfony':
+            cmd = 'symfony test-all'
+        elif self.test_program == 'jelix':
+            # as seen on http://jelix.org/articles/fr/manuel-1.1/tests_unitaires
+            cmd = 'php tests.php'
+
+
+        if not cmd:
+            raise InvalidTestProgram("The test program %s is unknown."
+                "Valid options are `nose`, `django`, `py`, `symfony` and `jelix`"
+                    % self.test_program)
+
+        self.run(cmd)
 
     def loop(self):
         """Main loop daemon."""
@@ -209,8 +231,9 @@ def main(prog_args=None):
     parser = optparse.OptionParser()
     parser.usage = """Usage: %[prog] [options] [<path>]"""
     parser.add_option("-t", "--test-program", dest="test_program",
-        default="nose",
-        help="specifies the test-program to use. Valid values include `nose` (or `nosetests`), `django` and `py` (for `py.test`)")
+        default="nose", help="specifies the test-program to use. Valid values"
+        " include `nose` (or `nosetests`), `django`, `py` (for `py.test`), "
+        '`symfony` and `jelix`')
     parser.add_option("-d", "--debug", dest="debug", action="store_true",
         default=False)
     parser.add_option('-s', '--size-max', dest='size_max', default=25,
