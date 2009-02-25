@@ -124,6 +124,11 @@ class Watcher(object):
             cmd = "python %s/manage.py test" % self.file_path
         elif self.test_program == 'py':
             cmd = 'py.test %s' % self.file_path
+        elif self.test_program == 'symfony':
+            cmd = 'symfony test-all'
+        elif self.test_program == 'jelix':
+            # as seen on http://jelix.org/articles/fr/manuel-1.1/tests_unitaires
+            cmd = 'php tests.php'
 
         if not cmd:
             raise InvalidTestProgram("The test program %s is unknown. Valid options are: `nose`, `django` and `py`" % self.test_program)
@@ -189,26 +194,6 @@ class Watcher(object):
     def run_tests(self):
         """Execute tests"""
         self.run(self.cmd)
-        cmd = None
-        if self.test_program in ('nose', 'nosetests'):
-            cmd = "cd %s && nosetests" % self.file_path
-        elif self.test_program == 'django':
-            cmd = "python %s/manage.py test" % self.file_path
-        elif self.test_program == 'py':
-            cmd = 'py.test %s' % self.file_path
-        elif self.test_program == 'symfony':
-            cmd = 'symfony test-all'
-        elif self.test_program == 'jelix':
-            # as seen on http://jelix.org/articles/fr/manuel-1.1/tests_unitaires
-            cmd = 'php tests.php'
-
-
-        if not cmd:
-            raise InvalidTestProgram("The test program %s is unknown."
-                "Valid options are `nose`, `django`, `py`, `symfony` and `jelix`"
-                    % self.test_program)
-
-        self.run(cmd)
 
     def loop(self):
         """Main loop daemon."""
