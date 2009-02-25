@@ -237,8 +237,8 @@ def main(prog_args=None):
 
         print "Ready to watch file changes..."
         watcher.loop()
-    except Exception, e:
-        print e
+    except Exception, msg:
+        print msg
 
     print "Bye"
 
