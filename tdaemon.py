@@ -18,7 +18,9 @@ from time import sleep
 import hashlib
 import commands
 import datetime
+import re
 
+SPECIAL_CHARS_REGEX_PATTERN = r'[#&;`|*?~<>^()\[\]{}$\\]+' 
 IGNORE_EXTENSIONS = ('pyc', 'pyo')
 IGNORE_DIRS = ('.bzr', '.git', '.hg', '.darcs', '.svn')
 IMPLEMENTED_TEST_PROGRAMS = ('nose', 'nosetests', 'django', 'py', 'symfony',
@@ -50,10 +52,7 @@ def ask(message='Are you sure? [y/N]'):
 def escapearg(args):
     """Escapes characters you don't want in arguments (preventing shell
     injection)"""
-    special_chars = '#&;`|*?~<>^()[]{}$\\'
-    for char in special_chars:
-        args = args.replace(char, '')
-    return args
+    return re.sub(SPECIAL_CHARS_REGEX_PATTERN, '', args) 
 
 class Watcher(object):
     """
