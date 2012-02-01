@@ -19,12 +19,13 @@ import hashlib
 import commands
 import datetime
 import re
+import subprocess
 
 SPECIAL_CHARS_REGEX_PATTERN = r'[#&;`|*?~<>^()\[\]{}$\\]+' 
 IGNORE_EXTENSIONS = ('pyc', 'pyo')
 IGNORE_DIRS = ('.bzr', '.git', '.hg', '.darcs', '.svn')
 IMPLEMENTED_TEST_PROGRAMS = ('nose', 'nosetests', 'django', 'py', 'symfony',
-    'jelix',
+    'jelix', 'phpunit'
 )
 
 # -------- Exceptions
@@ -111,6 +112,11 @@ class Watcher(object):
                 import django
             except:
                 sys.exit('django is not available on your system. Please install it and try to run it again')
+        if self.test_program == 'phpunit':
+            try:
+                process = subprocess.check_call(['phpunit','--version']) 
+            except:
+                sys.exit('phpunit is not available on your system. Please install it and try to run it again')
 
 
     def get_cmd(self):
@@ -128,6 +134,8 @@ class Watcher(object):
         elif self.test_program == 'jelix':
             # as seen on http://jelix.org/articles/fr/manuel-1.1/tests_unitaires
             cmd = 'php tests.php'
+        elif self.test_program == 'phpunit':
+            cmd = 'phpunit'
 
         if not cmd:
             raise InvalidTestProgram("The test program %s is unknown. Valid options are: `nose`, `django` and `py`" % self.test_program)
@@ -217,7 +225,7 @@ def main(prog_args=None):
     parser.add_option("-t", "--test-program", dest="test_program",
         default="nose", help="specifies the test-program to use. Valid values"
         " include `nose` (or `nosetests`), `django`, `py` (for `py.test`), "
-        '`symfony` and `jelix`')
+        '`symfony`, `jelix` and `phpunit`')
     parser.add_option("-d", "--debug", dest="debug", action="store_true",
         default=False)
     parser.add_option('-s', '--size-max', dest='size_max', default=25,
