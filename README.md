@@ -41,6 +41,7 @@ The available test programs are:
 * [py.test](http://codespeak.net/py/dist/test.html) (keyword is `py`)
 * [symfony](http://www.symfony-project.org/) (keyword is `symfony`)
 * [jelix](http://jelix.org/) (keyword is `jelix`)
+* [phpunit](http://www.phpunit.de/manual/current/en/index.html) (keyword is `phpunit`)
 
 Bear in mind that if you want to use one of these program, you **must** install
 them on your system.
