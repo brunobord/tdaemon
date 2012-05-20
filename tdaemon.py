@@ -16,7 +16,7 @@ import os
 import optparse
 from time import sleep
 import hashlib
-import commands
+import subprocess
 import datetime
 import re
 import subprocess
@@ -25,7 +25,7 @@ SPECIAL_CHARS_REGEX_PATTERN = r'[#&;`|*?~<>^()\[\]{}$\\]+'
 IGNORE_EXTENSIONS = ('pyc', 'pyo')
 IGNORE_DIRS = ('.bzr', '.git', '.hg', '.darcs', '.svn')
 IMPLEMENTED_TEST_PROGRAMS = ('nose', 'nosetests', 'django', 'py', 'symfony',
-    'jelix', 'phpunit'
+    'jelix', 'phpunit', 'sphinx',
 )
 
 # -------- Exceptions
@@ -136,6 +136,8 @@ class Watcher(object):
             cmd = 'php tests.php'
         elif self.test_program == 'phpunit':
             cmd = 'phpunit'
+        elif self.test_program == 'sphinx':
+            cmd = 'make.bat html'
 
         if not cmd:
             raise InvalidTestProgram("The test program %s is unknown. Valid options are: `nose`, `django` and `py`" % self.test_program)
@@ -195,7 +197,8 @@ class Watcher(object):
     def run(self, cmd):
         """Runs the appropriate command"""
         print datetime.datetime.now()
-        output = commands.getoutput(cmd)
+        output = subprocess.Popen(cmd, shell=True)
+        output = output.communicate()[0]
         print output
 
     def run_tests(self):
