@@ -137,7 +137,7 @@ class Watcher(object):
         elif self.test_program == 'phpunit':
             cmd = 'phpunit'
         elif self.test_program == 'sphinx':
-            cmd = 'make.bat html'
+            cmd = 'make html'
 
         if not cmd:
             raise InvalidTestProgram("The test program %s is unknown. Valid options are: `nose`, `django` and `py`" % self.test_program)
