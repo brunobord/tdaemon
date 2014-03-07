@@ -64,7 +64,7 @@ class Watcher(object):
     debug = False
 
     def __init__(self, file_path, test_program, debug=False, custom_args='', 
-        ignore_dirs=None):
+        ignore_dirs=None, quiet=False):
         # Safe filter
         custom_args = escapearg(custom_args)
 
@@ -75,6 +75,7 @@ class Watcher(object):
         self.file_list = self.walk(file_path)
         self.test_program = test_program
         self.custom_args = custom_args
+        self.quiet = quiet
 
         # check configuration
         self.check_configuration(file_path, test_program, custom_args)
@@ -96,7 +97,7 @@ class Watcher(object):
             raise InvalidTestProgram('The `%s` is unknown, or not yet implemented. Please chose another one.' % test_program)
 
         if custom_args:
-            if not ask("WARNING!!!\nYou are about to run the following command\n\n   $ %s\n\nAre you sure you still want to proceed [y/N]? " % self.get_cmd()):
+            if not self.quiet and not ask("WARNING!!!\nYou are about to run the following command\n\n   $ %s\n\nAre you sure you still want to proceed [y/N]? " % self.get_cmd()):
                 raise CancelDueToUserRequest('Test cancelled...')
 
     def check_dependencies(self):
@@ -247,6 +248,9 @@ def main(prog_args=None):
     parser.add_option('--ignore-dirs', dest='ignore_dirs', default='',
         type="str",
         help="Defines directories to ignore.  Use a comma-separated list.")
+    parser.add_option('-y', '--quiet', dest='quiet', action="store_true",
+        default=False,
+        help="Don't ask for any input.")
 
     opt, args = parser.parse_args(prog_args)
 
@@ -255,14 +259,15 @@ def main(prog_args=None):
     else:
         path = '.'
 
+
     try:
         watcher = Watcher(path, opt.test_program, opt.debug, opt.custom_args, 
-            opt.ignore_dirs)
+            opt.ignore_dirs, opt.quiet)
         watcher_file_size = watcher.file_sizes()
         if watcher_file_size > opt.size_max:
             message =  "It looks like the total file size (%dMb) is larger  than the `max size` option (%dMb).\nThis may slow down the file comparison process, and thus the daemon performances.\nDo you wish to continue? [y/N] " % (watcher_file_size, opt.size_max)
 
-            if not ask(message):
+            if not opt.quiet and not ask(message):
                 raise CancelDueToUserRequest('Ok, thx, bye...')
 
         print "Ready to watch file changes..."
@@ -277,4 +282,3 @@ def main(prog_args=None):
 
 if __name__ == '__main__':
     main()
-
