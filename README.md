@@ -43,6 +43,7 @@ The available test programs are:
 * [jelix](http://jelix.org/) (keyword is `jelix`)
 * [phpunit](http://www.phpunit.de/manual/current/en/index.html) (keyword is `phpunit`)
 * [sphinx](http://sphinx.pocoo.org/) (keyword is `sphinx`)
+* [tox](http://codespeak.net/tox/) (keyword is `tox`)
 
 Bear in mind that if you want to use one of these program, you **must** install
 them on your system.

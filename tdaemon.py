@@ -25,7 +25,7 @@ SPECIAL_CHARS_REGEX_PATTERN = r'[#&;`|*?~<>^()\[\]{}$\\]+'
 IGNORE_EXTENSIONS = ('pyc', 'pyo')
 IGNORE_DIRS = ('.bzr', '.git', '.hg', '.darcs', '.svn', '.tox')
 IMPLEMENTED_TEST_PROGRAMS = ('nose', 'nosetests', 'django', 'py', 'symfony',
-    'jelix', 'phpunit', 'sphinx',
+    'jelix', 'phpunit', 'sphinx', 'tox'
 )
 
 # -------- Exceptions
@@ -122,6 +122,11 @@ class Watcher(object):
                 process = subprocess.check_call(['phpunit','--version']) 
             except:
                 sys.exit('phpunit is not available on your system. Please install it and try to run it again')
+        if self.test_program == 'tox':
+            try:
+                import tox
+            except ImportError:
+                sys.exit('tox is not available on your system. Please install it and try to run it again')
 
 
     def get_cmd(self):
@@ -147,6 +152,8 @@ class Watcher(object):
             cmd = 'phpunit'
         elif self.test_program == 'sphinx':
             cmd = 'make html'
+        elif self.test_program == 'tox':
+            cmd = 'tox'
 
         if not cmd:
             raise InvalidTestProgram("The test program %s is unknown. Valid options are: `nose`, `django` and `py`" % self.test_program)
@@ -237,7 +244,7 @@ def main(prog_args=None):
     parser.add_option("-t", "--test-program", dest="test_program",
         default="nose", help="specifies the test-program to use. Valid values"
         " include `nose` (or `nosetests`), `django`, `py` (for `py.test`), "
-        '`symfony`, `jelix` and `phpunit`')
+        '`symfony`, `jelix` `phpunit` and `tox`')
     parser.add_option("-d", "--debug", dest="debug", action="store_true",
         default=False)
     parser.add_option('-s', '--size-max', dest='size_max', default=25,
